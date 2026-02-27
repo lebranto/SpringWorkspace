@@ -6,4 +6,9 @@
 		<setting name="mapUnderscoreToCamelCase" value="true"/>
 		<setting name="jdbcTypeForNull" value="NULL"/>
 	</settings>
+	
+	<typeAliases>
+		<package name="com.kh.spring"/> <!-- 내가 지정한 패키지 아래에 전부 설정  -->
+	</typeAliases>
+	
 </configuration>

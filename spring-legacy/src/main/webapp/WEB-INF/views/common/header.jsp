@@ -101,7 +101,7 @@ height:80%; position:absolute; margin:auto; top:0px; bottom:0px; right:0px; left
 				<c:choose>
                     <c:when test="${empty loginUser}">
                         <!-- 로그인전이라면 -->
-                        <a href="${contextPath }/memeber/insert">회원가입</a>
+                        <a href="${contextPath }/member/insert">회원가입</a>
                         <!-- 모달창 설정 : data-target에 정의해놓은 아이디의 dom요소를 띄워줌 -->
                         <a href="${contextPath}/member/login">로그인</a>
                     </c:when>
