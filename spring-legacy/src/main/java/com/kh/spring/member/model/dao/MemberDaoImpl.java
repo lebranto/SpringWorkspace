@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.kh.spring.member.model.vo.Member;
+import com.kh.spring.security.model.vo.MemberExt;
 
 @Repository
 public class MemberDaoImpl implements MemberDao{
@@ -32,6 +33,18 @@ public class MemberDaoImpl implements MemberDao{
 	@Override
 	public Member selectOne(String userId) {
 		return session.selectOne("member.selectOne", userId);
+	}
+
+	@Override
+	public int updateMember(MemberExt loginUser) {
+		return session.update("member.updateMember", loginUser); 
+		//updateMember 아이디 값을 가진 쿼리문에 값을 보냄
+	}
+
+	@Override
+	public void insertAuthority(Member m) {
+		session.insert("member.insertAuthority",m);
+		
 	}
 
 	
