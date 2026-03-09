@@ -67,7 +67,6 @@
                 </tr>
             </thead>
             <tbody>
-            <!--  -->            
             <c:choose>
                 <c:when test="${empty list}">
                     <tr>
@@ -153,8 +152,6 @@
 
         </div>
     </div>
-
-
 
     <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
 </body>

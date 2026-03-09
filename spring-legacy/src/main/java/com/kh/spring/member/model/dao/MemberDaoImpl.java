@@ -9,44 +9,44 @@ import com.kh.spring.security.model.vo.MemberExt;
 
 @Repository
 public class MemberDaoImpl implements MemberDao{
-
+	
 	@Autowired
 	private SqlSessionTemplate session;
 	
 	@Override
 	public Member loginMember(Member m) {
-		return session.selectOne("member.loginMember", m);
-	
+		return session.selectOne("member.loginMember" , m);
 	}
 
 	@Override
 	public int insertMember(Member m) {
-		return session.insert("member.insertMember", m);
+		return session.insert("member.insertMember" ,  m);
 	}
 
 	@Override
 	public int idCheck(String userId) {
-	
 		return session.selectOne("member.idCheck", userId);
 	}
 
 	@Override
 	public Member selectOne(String userId) {
-		return session.selectOne("member.selectOne", userId);
+		return session.selectOne("member.selectOne",userId);
 	}
 
 	@Override
 	public int updateMember(MemberExt loginUser) {
-		return session.update("member.updateMember", loginUser); 
-		//updateMember 아이디 값을 가진 쿼리문에 값을 보냄
+		return session.update("member.updateMember", loginUser);
 	}
 
 	@Override
 	public void insertAuthority(Member m) {
-		session.insert("member.insertAuthority",m);
-		
+		session.insert("member.insertAuthority", m);
 	}
 
-	
-	
 }
+
+
+
+
+
+

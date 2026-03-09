@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>    
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,10 +20,9 @@
 	
 	.error{
 		color:red;
-		font-size:0.9em;
-		magin-left : 10px;
+		font-size: 0.9em;
+		margin-left : 10px;
 	}
-	
 </style>
 </head>
 <body>
@@ -37,29 +36,24 @@
 		
 		<%--
 			<form:form>
-			 - form 태그에 데이터를 자동으로 바인딩 해주는 태그
-			 - 코드의 가독성과 유지 보수성 향상을 위해 사용한다.
-			 - form 태그에 바인딩할 객체는 서버에서 model 추가해서 넣어준다.
+			 - form태그에 데이터를 자동으로 바인딩해주는 태그
+			 - 코드의 가독성과 유지보수성 향상을 위해 사용한다.
+			 - form태그에 바인딩할 객체는 서버에서 model 추가해서 넣어준다.
 			 
-			 form 태그의 핵심 기능
+			 form태그의 핵심 기능
 			 1. 유효성 검사 실패시 입력값 유지 기능
-			 
 			 2. 에러메세지 자동 표시 기능
 			 
-			 3. CSRF 공격 방어 기능(중요)
-			 
+			 3. csrf공격 방어 기능(중요) 
 		 --%>
 		
-		
-		
 		<form:form modelAttribute="member" 
-			id="enroll-form" action="${contextPath}/security/insert" method="post">
+			id="enroll-form" action="${contextPath }/security/insert" method="post">
 			<!-- 회원가입form안에.txt -->
 			<table align="center">
 				<tr>
 					<td>* ID</td>
-					<td><form:input path="userId" required="required" /> 
-					<!-- path는 name같은 성격  -->
+					<td><form:input path="userId" required="required" />
 						<button type="button" onclick="idCheck();">아이디중복체크</button>
 						<form:errors path="userId" cssClass="error" />
 					</td>
@@ -67,7 +61,7 @@
 				<tr>
 					<td>* PWD</td>
 					<td>
-					    <form:password path="userPwd" required="required"/>
+						<form:password path="userPwd" required="required" />
 						<form:errors path="userPwd" cssClass="error" />
 					</td>
 				</tr>
@@ -79,43 +73,41 @@
 					</td>
 				</tr>
 				<tr>
+					<td>&nbsp;&nbsp;EMAIL</td>
+					<td>
+						<form:input path="email"/>
+						<form:errors path="email" cssClass="error"/>
+					</td>
+				</tr>
 				<tr>
-                    <td>&nbsp;&nbsp;EMAIL</td>
-                    <td>
-                        <form:input path="email"/>
-                        <form:errors path="email" cssClass="error"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>&nbsp;&nbsp;BIRTHDAY</td>
-                    <td>
-                        <form:input path="birthday" placeholder="생년월일(6자리)"/>
-                        <form:errors path="birthday" cssClass="error"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>&nbsp;&nbsp;GENDER</td>
-                    <td align="center">
-                        <form:radiobutton path="gender" value="M"/> 남
-                        <form:radiobutton path="gender" value="F"/> 여
-                        <form:errors path="gender" cssClass="error"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>&nbsp;&nbsp;PHONE</td>
-                    <td>
-                        <form:input path="phone" placeholder="-포함"/>
-                        <form:errors path="phone" cssClass="error"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>&nbsp;&nbsp;ADDRESS</td>
-                    <td>
-                        <form:input path="address"/>
-                        <form:errors path="address" cssClass="error"/>
-                    </td>
-                </tr>
-					
+					<td>&nbsp;&nbsp;BIRTHDAY</td>
+					<td>
+						<form:input path="birthday" placeholder="생년월일(6자리)"/>
+						<form:errors path="birthday" cssClass="error"/>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;&nbsp;GENDER</td>
+					<td align="center">
+						<form:radiobutton path="gender" value="M"/> 남
+						<form:radiobutton path="gender" value="F"/> 여
+						<form:errors path="gender" cssClass="error"/>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;&nbsp;PHONE</td>
+					<td>
+						<form:input path="phone" placeholder="-포함"/>
+						<form:errors path="phone" cssClass="error"/>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;&nbsp;ADDRESS</td>
+					<td>
+						<form:input path="address"/>
+						<form:errors path="address" cssClass="error"/>
+					</td>
+				</tr>
 			</table>
 			<br>
 			<div align="center">
@@ -148,6 +140,11 @@
 			
 		}
 	</script>
+	
+	
+	
+	
+	
 	
 	
 	

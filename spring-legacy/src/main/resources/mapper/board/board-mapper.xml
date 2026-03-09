@@ -1,28 +1,179 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="board">
-
- <select id="getBoardTypeMap" resultType="boardType">
- 	SELECT BOARD_CD as "boardCd", BOARD_NAME
- 	FROM BOARD_TYPE
- </select>
-
- <select id="selectList" resultType="board">
- 	
-  	SELECT
- 	 BOARD_NO,
- 	 BOARD_TITLE,
- 	 USER_NAME AS BOARD_WRITER,
- 	 COUNT,
- 	 CREATE_DATE
- 	FROM BOARD B
- 	LEFT JOIN MEMBER M ON BOARD_WRITER = USER_NO
-    WHERE B.STATUS = 'Y' AND BOARD_CD = #{boardCd}
-    ORDER BY BOARD_NO DESC
-    
- </select>
 	
-
+	<select id="getBoardTypeMap" resultType="boardType" >
+		 SELECT BOARD_CD as "boardCd" , BOARD_NAME
+		 FROM BOARD_TYPE
+	</select>
 	
-
+	<select id="selectList" resultType="board">
+		SELECT *
+		FROM (
+		    SELECT ROWNUM AS RNUM , T1.* 
+		    FROM (
+		        SELECT 
+		            BOARD_NO,
+		            BOARD_TITLE , 
+		            USER_NAME AS BOARD_WRITER , 
+		            COUNT, 
+		            CREATE_DATE
+		        FROM BOARD B
+		        LEFT JOIN MEMBER M ON BOARD_WRITER = USER_NO
+		        WHERE B.STATUS = 'Y' AND BOARD_CD = #{boardCd}
+		        <if test="keyword != null and keyword != ''">
+		        	AND 
+		        	<choose>
+		        		<when test="condition.equals('title')">
+		        			BOARD_TITLE LIKE '%' || #{keyword} || '%'
+		        		</when>
+		        		<when test="condition.equals('writer')">
+		        			USER_NAME LIKE '%' || #{keyword} || '%'
+		        		</when>
+		        		<when test="condition.equals('content')">
+		        			BOARD_CONTENT LIKE '%' || #{keyword} || '%'
+		        		</when>
+		        		<otherwise>
+		        			(BOARD_TITLE LIKE '%' || #{keyword} || '%'
+		        			OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')
+		        		</otherwise>		        		
+		        	</choose>
+		        </if>		        
+		        ORDER BY BOARD_NO DESC) T1
+		)
+		WHERE RNUM BETWEEN #{offset} AND #{limit}
+	</select>
+	
+	<select id="selectListCount" resultType="int">
+		SELECT COUNT(*)
+		FROM BOARD B
+		LEFT JOIN MEMBER M ON BOARD_WRITER = USER_NO
+		WHERE B.STATUS = 'Y' AND BOARD_CD = #{boardCd}
+		<if test="keyword != null and keyword != ''">
+        	AND 
+        	<choose>
+        		<when test="condition.equals('title')">
+        			BOARD_TITLE LIKE '%' || #{keyword} || '%'
+        		</when>
+        		<when test="condition.equals('writer')">
+        			USER_NAME LIKE '%' || #{keyword} || '%'
+        		</when>
+        		<when test="condition.equals('content')">
+        			BOARD_CONTENT LIKE '%' || #{keyword} || '%'
+        		</when>
+        		<otherwise>
+        			(BOARD_TITLE LIKE '%' || #{keyword} || '%'
+        			OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')
+        		</otherwise>		        		
+        	</choose>
+        </if>	
+	</select>
+	
+	<insert id="insertBoard" >
+		<selectKey keyProperty="boardNo"
+		 resultType="int" 
+		 order="BEFORE">
+			SELECT SEQ_BNO.NEXTVAL FROM DUAL
+		</selectKey>
+			
+		INSERT INTO BOARD
+		VALUES(#{boardNo}
+		, #{boardTitle}, #{boardContent}, #{boardCd}, #{boardWriter},
+		 DEFAULT, DEFAULT, DEFAULT)
+	</insert>
+	
+	<insert id="insertBoardImg">
+		INSERT INTO BOARD_IMG
+		VALUES (SEQ_IMG_NO.NEXTVAL, 
+		#{originName}, #{changeName}, #{refBno}, #{imgLevel} )
+	</insert>
+	
+	<!-- 
+		행단위 insert문을 one sql로 수정하기
+		
+		서브쿼리를 활용한 다중 insert문으로 한방에 모든 데이터 추가하기				
+	 -->
+	 <insert id="insertBoardImgList">
+	 	INSERT INTO BOARD_IMG
+	 		(BOARD_IMG_NO, ORIGIN_NAME,CHANGE_NAME, REF_BNO,IMG_LEVEL)
+	 	SELECT SEQ_IMG_NO.NEXTVAL, C.*
+	 	FROM (
+	 		<foreach collection="list" item="bi" separator="UNION ALL">
+	 			SELECT
+	 				#{bi.originName} , #{bi.changeName}
+	 				, #{bi.refBno} , #{bi.imgLevel}
+	 			FROM DUAL
+	 		</foreach>
+	 	) C
+	 </insert>
+	 
+	 <select id="selectBoard" resultMap="boardExtMap">
+	 
+	SELECT 
+    	BOARD_NO,
+   	 	BOARD_WRITER,
+    	BOARD_TITLE, BOARD_CONTENT, COUNT, CREATE_DATE, USER_NAME
+	FROM BOARD B
+	LEFT JOIN MEMBER M ON BOARD_WRITER = USER_NO
+	WHERE BOARD_NO = #{boardNo}
+	AND B.STATUS= 'Y'	
+	 </select>
+	 
+	 
+	 <resultMap type="boardExt" id="boardExtMap">
+	 	<id column="BOARD_NO" property="boardNo" />
+	 	
+	 	<!-- imgList 바이딩 -->
+	 	
+	 	<collection property="imgList"
+	 	 javaType="List"
+	 	 ofType="boarImg"
+	 	 select="selectBoardImgList"
+	 	 column="BOARD_NO"
+	 	
+	 	/>
+	 		 	
+	 
+	 </resultMap>
+	
+	 	<select id="selectBoardImgList" resultType="boardImg">
+	 		SELECT *
+	 		FROM BOARD_IMG
+	 		WHERE REF_BNO = #{boardNo}
+	 		ORDER BY IMG_LEVEL		
+	 	</select>
+		
+		
+		<update id="increaseCount">
+			UPDATE BOARD
+			SET COUNT = COUNT +1
+			WHERE BOARD_NO = #{boardNo}
+		</update>
+		
+		<update id="updateBoard">
+		UPDATE BOARD SET
+			BOARD_TITLE = #{boardTitle},
+			BOARD_CONTENT = #{boardContent}
+		WHERE BOARD_NO = #{boardNo}
+		
+		</update>
+		
+		<update id="updateBoardImg">
+		UPDATE BOARD_IMG SET
+			 ORIGIN_NAME = #{originName},
+			 CHANGE_NAME = #{changeName}
+		WHERE BOARD_IMG_NO = #{boardImgNo}
+		
+		</update>
+		
+		<delete id="deleteBoardImg">
+		DELETE FROM BOARD_IMG
+		WHERE BOARD_IMG_NO IN (${deleteList})
+		</delete>
+		
+	
+	
+	
+	
 </mapper>
+
