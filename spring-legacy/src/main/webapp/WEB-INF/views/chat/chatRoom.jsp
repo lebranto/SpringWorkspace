@@ -1,141 +1,135 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec"
-    uri="http://www.springframework.org/security/tags"%>
+	uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link href="${contextPath }/resources/css/chat-style.css"
-    rel="stylesheet">
+	rel="stylesheet">
 <link href="${contextPath }/resources/css/main-style.css"
-    rel="stylesheet">
+	rel="stylesheet">
 <style>
 .chatting-area {
-    margin: auto;
-    height: 600px;
-    width: 800px;
-    margin-top: 50px;
-    margin-bottom: 500px;
+	margin: auto;
+	height: 600px;
+	width: 800px;
+	margin-top: 50px;
+	margin-bottom: 500px;
 }
 
 #exit-area {
-    text-align: right;
-    margin-bottom: 10px;
+	text-align: right;
+	margin-bottom: 10px;
 }
 
 .display-chatting {
-    width: 42%;
-    height: 450px;
-    border: 1px solid gold;
-    overflow: auto; /*스크롤 처럼*/
-    list-style: none;
-    padding: 10px 10px;
-    background: lightblue;
-    z-index: 1;
-    margin: auto;
-    background-image:
-        url(${contextPath}/resources/main/chunsickbackground.png);
-    background-position: center;
+	width: 42%;
+	height: 450px;
+	border: 1px solid gold;
+	overflow: auto; /*스크롤 처럼*/
+	list-style: none;
+	padding: 10px 10px;
+	background: lightblue;
+	z-index: 1;
+	margin: auto;
+	background-image:
+		url(${contextPath}/resources/main/chunsickbackground.png);
+	background-position: center;
 }
 
 .img {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    z-index: -100;
+	width: 100%;
+	height: 100%;
+	position: relative;
+	z-index: -100;
 }
 
 .chat {
-    display: inline-block;
-    border-radius: 5px;
-    padding: 5px;
-    background-color: #eee;
+	display: inline-block;
+	border-radius: 5px;
+	padding: 5px;
+	background-color: #eee;
 }
 
 .input-area {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+	width: 100%;
+	display: flex;
+	justify-content: center;
 }
 
 #inputChatting {
-    width: 32%;
-    resize: none;
+	width: 32%;
+	resize: none;
 }
 
 #send {
-    width: 20%;
+	width: 20%;
 }
 
 .myChat {
-    text-align: right;
+	text-align: right;
 }
 
 .myChat>p {
-    background-color: gold;
+	background-color: gold;
 }
 
 .chatDate {
-    font-size: 10px;
+	font-size: 10px;
 }
 </style>
 </head>
 <body>
-    <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
+	<jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 
-    <div class="chatting-area">
-        <div id="exit-area">
-            <button class="btn btn-outline-danger" id="exit-btn">나가기</button>
-        </div>
-        <ul class="display-chatting">
-            <c:forEach items="${list}" var="msg">
-                <c:if test='${msg.userNo eq loginUser.userNo }'>
-                    <li class="myChat"><span class="chatDate">${msg.createDate}</span>
-                        <p class="chat">${msg.message}</p></li>
-                </c:if>
-                <c:if test="${msg.userNo ne loginUser.userNo }">
-                    <li><b>${msg.userName }</b>
-                        <p class="chat">${msg.message }</p> <span class="chatDate">${msg.createDate }</span>
-                    </li>
-                </c:if>
-            </c:forEach>
-        </ul>
+	<div class="chatting-area">
+		<div id="exit-area">
+			<button class="btn btn-outline-danger" id="exit-btn">나가기</button>
+		</div>
+		<ul class="display-chatting">
+			<c:forEach items="${list}" var="msg">
+				<c:if test='${msg.userNo eq loginUser.userNo }'>
+					<li class="myChat"><span class="chatDate">${msg.createDate}</span>
+						<p class="chat">${msg.message}</p></li>
+				</c:if>
+				<c:if test="${msg.userNo ne loginUser.userNo }">
+					<li><b>${msg.userName }</b>
+						<p class="chat">${msg.message }</p> <span class="chatDate">${msg.createDate }</span>
+					</li>
+				</c:if>
+			</c:forEach>
+		</ul>
 
-        <div class="input-area">
-            <textarea id="inputChatting" rows="3"></textarea>
-            <button id="send">보내기</button>
-        </div>
-    </div>
-    
-    <script
-        src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+		<div class="input-area">
+			<textarea id="inputChatting" rows="3"></textarea>
+			<button id="send">보내기</button>
+		</div>
+	</div>
+	
 	
 	<script>
-		/* 채팅 설정을 위한 전역 변수들*/
+		/* 채팅설정을 위한 전역변수들 */
 		const userNo = '${loginUser.userNo}';
-		const userName = '${loingUser.userName}';
-		const chatRoomNo = '${chatRoomNo}'; // 채팅방 룸 구분 
+		const userName = '${loginUser.userName}';
+		const chatRoomNo = '${chatRoomNo}';
 		const contextPath = '${contextPath}';
-		
 		
 		// 웹소켓 연결 요청
 		var chattingSocket = new SockJS(contextPath+"/chat");
 		
-		// 스톰프 연결 설정
-		var stompClient = Stomp.over(new SockJS(contextPath+"/stomp"))
-		
+		// 스톰프 연결설정
+		var stompClient = Stomp.over(new SockJS(contextPath+"/stomp"));
 	</script>
+	<script src="${contextPath}/resources/js/chat.js"></script>	
+	<script src="${contextPath}/resources/js/stomp.js"></script>	
 	
-	<script src="${contextPath}/resources/js/chat.js"></script>
-	<script src="${contextPath}/resources/js/stomp.js"></script>
-
-
-
-    <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
+	
+	
+	<jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
 
 
 

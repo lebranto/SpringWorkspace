@@ -16,7 +16,6 @@
 		<org.springsecurity-version>5.7.14</org.springsecurity-version>
 	</properties>
 	
-	
 	<dependencies>
 		<!-- Spring -->
 		<dependency>
@@ -37,12 +36,7 @@
 			<version>${org.springframework-version}</version>
 		</dependency>
 				
-		<!-- AspectJ -->
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>${org.aspectj-version}</version>
-		</dependency>	
+		
 		
 		<!-- Logging -->
 		<dependency>
@@ -96,7 +90,7 @@
 				
 		<!-- Servlet
 		1. 서블릿 버전 2.5에서 4.0.1로 변경
-		-->
+		 -->
 		<!-- Source: https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
 		<dependency>
 		    <groupId>javax.servlet</groupId>
@@ -111,7 +105,6 @@
 			<version>2.1</version>
 			<scope>provided</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
@@ -166,8 +159,6 @@
 		    <scope>compile</scope>
 		</dependency>
 		<!--  DB관련 라이브러리 끝. -->
-		
-		
 		<!-- 3. 롬복 -->
 		<!-- Source: https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
@@ -252,29 +243,40 @@
 		    <scope>compile</scope>
 		</dependency>
 	    <!-- 게시판 서비스 관련 의존성 끝 -->
-	    
-	    <!-- 웹소켓(실시간) 관련 의존성 -->
-	    
-	    <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-websocket -->
-	<dependency>
-    	<groupId>org.springframework</groupId>
-    	<artifactId>spring-websocket</artifactId>
-    	<version>${org.springframework-version}</version>
-    	<scope>compile</scope>
-	</dependency>
-	    
-	    <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-messaging -->
-	<dependency>
-    	<groupId>org.springframework</groupId>
-    	<artifactId>spring-messaging</artifactId>
-    	<version>${org.springframework-version}</version>
-    	<scope>compile</scope>
-	</dependency>
-	    
-	    
-	    <!-- 웹소켓(실시간) 관련 의존성  끝 -->
-	    
-	    
+		
+		<!-- 웹소켓(실시간통신) 의존성 -->
+		<!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-websocket -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-websocket</artifactId>
+		    <version>${org.springframework-version}</version>
+		    <scope>compile</scope>
+		</dependency>
+		<!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-messaging -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-messaging</artifactId>
+		    <version>${org.springframework-version}</version>
+		    <scope>compile</scope>
+		</dependency>
+		<!-- 웹소켓 의존성 끝 -->
+		
+		<!-- AOP 의존성 -->
+		<!-- AspectJ -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${org.aspectj-version}</version>
+		</dependency>	
+		<!-- Source: https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+		<dependency>
+		    <groupId>org.aspectj</groupId>
+		    <artifactId>aspectjweaver</artifactId>
+		    <version>${org.aspectj-version}</version>
+		    <scope>runtime</scope>
+		</dependency>
+		
+		
 	</dependencies>
     <build>
         <plugins>

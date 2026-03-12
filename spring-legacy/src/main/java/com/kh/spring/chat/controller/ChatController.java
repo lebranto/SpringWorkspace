@@ -27,33 +27,25 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/chat")
 @RequiredArgsConstructor
 @SessionAttributes({"chatRoomNo"})
-
 public class ChatController {
-	
+
 	private final ChatService chatService;
 	
 	@GetMapping("/chatRoomList")
 	public String selectChatRoomList(Model model) {
-		
-		List<ChatRoom> list = chatService.selectChatRoomList(); 
-		
-		model.addAttribute("list", list);
+		List<ChatRoom> list = chatService.selectChatRoomList();
+		model.addAttribute("list",list);
 		
 		return "chat/chatRoomList";
-		
-		
 	}
-	
 	
 	@PostMapping("/openChatRoom")
 	public String openChatRoom(
-			
 			@ModelAttribute ChatRoom room,
 			Authentication auth,
 			RedirectAttributes ra
 			) {
-		
-		MemberExt m = (MemberExt)auth.getPrincipal();
+		MemberExt m = (MemberExt) auth.getPrincipal();
 		room.setUserNo(m.getUserNo());
 		
 		int result = chatService.openChatRoom(room);
@@ -61,42 +53,47 @@ public class ChatController {
 		if(result == 0) {
 			throw new RuntimeException("채팅방 등록 실패");
 		}
-		
-		ra.addFlashAttribute("alertMsg","채팅방 생성 성공");
+		ra.addFlashAttribute("alertMsg", "채팅방 생성 성공");
 		
 		return "redirect:/chat/chatRoomList";
-		
 	}
+	
 	// 채팅방 참여기능
 	@GetMapping("/room/{chatRoomNo}")
 	public String joinChatRoom(
-			@PathVariable("chatRoomNo") int chatRoomNo,
-			Model model,
+			@PathVariable("chatRoomNo") int chatRoomNo, 
+			Model model, 
 			Authentication auth,
-			ChatRoomJoin join			
+			ChatRoomJoin join
 			) {
 		/*
 		 * 업무로직
 		 * 1. 채팅방 번호를 통해 채팅방 메세지 내용 조회
 		 * 2. 참여자수 증가(chatRoomJoin테이블에 데이터 등록)
-		 * 3. 채팅방 메세지를 model에 추가후 forward 
-		 * 
-		 * */
-		
-		MemberExt user = (MemberExt)auth.getPrincipal();
+		 * 3. 채팅방 메세지를 model에 추가후 forward
+		 *  */
+		MemberExt user = (MemberExt) auth.getPrincipal();
 		join.setUserNo(user.getUserNo());
 		join.setChatRoomNo(chatRoomNo);
 		
 		List<ChatMessage> list = chatService.joinChatRoom(join);
 		
 		model.addAttribute("list",list);
-		model.addAttribute("loginUser",user);
-		model.addAttribute("chatRoomNo",chatRoomNo); // session 스코프에 보관하기
+		model.addAttribute("loginUser", user);
+		model.addAttribute("chatRoomNo", chatRoomNo);//seesion스코프에 보관하기
 		
 		return "chat/chatRoom";
-		
 	}
 	
 	
-
+	
+	
+	
+	
+	
 }
+
+
+
+
+

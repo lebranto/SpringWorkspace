@@ -8,29 +8,23 @@
 <head>
 <meta charset="UTF-8">
 <title>제목</title>
-
-<meta name="_csrf" content="${_csrf.token}">
+<meta name="_csrf" content="${_csrf.token}" >
 <meta name="_csrf_header" content="${_csrf.headerName}">
-
 <script>
 	window.onload = function(){
 		var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr('content');
 		
-		// 모든 ajax 요청에 자동으로 csrf토큰을 적용
+		// 모든 ajax요청에 자동으로 csrf토큰을 적용
 		$(document).ajaxSend(function(e, xhr, options){
-			xhr.setRequestHeader(header,token);
+			xhr.setRequestHeader(header, token);
 		});
 	}
-
 </script>
-
-
 <!--  공통적으로사용할 라이브러리 추가 -->
 <script
-        src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
-
+		src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>	
 <!-- Jquey 라이브러리 -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <!-- 부트스트랩에서 제공하있는 스타일 -->
@@ -110,24 +104,18 @@ height:80%; position:absolute; margin:auto; top:0px; bottom:0px; right:0px; left
 
 <sec:authorize access="isAuthenticated()">
 	<script>
-	 $(function(){
-		 const stompClient = Stomp.over(new SockJS('${contextPath}/stomp'))
-		 
-		 stompClient.connect({},function(){
-			 //전체 공지사항 url 구독
-			 stompClient.subscribe("/topic/notice",function(message){
-				 alertify.alert(message.body);
-			 })
-		 })
-	 })
-	
-	
+		$(function(){
+			const stompClient = Stomp.over(new SockJS('${contextPath}/stomp'));
+			
+			stompClient.connect({},function(){
+				//전체 공지사항 url구독
+				stompClient.subscribe("/topic/notice", function(message){
+					alertify.alert(message.body);
+				})
+			})
+		})
 	</script>
-
-
 </sec:authorize>
-
-
 
 </head>
 <body>

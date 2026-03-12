@@ -8,7 +8,7 @@ public interface ReplyDao {
 
 	int insertReply(Reply r);
 
-	List<Reply> insertList(int boardNo);
+	List<Reply> selectList(int boardNo);
 
 	int deleteReply(Reply r);
 

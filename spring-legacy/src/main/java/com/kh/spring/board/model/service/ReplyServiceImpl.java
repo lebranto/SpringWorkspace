@@ -17,25 +17,24 @@ public class ReplyServiceImpl implements ReplyService{
 	
 	private final ReplyDao rDao;
 	
-	
 	@Override
 	public int insertReply(Reply r) {
-		
 		return rDao.insertReply(r);
 	}
 
-
 	@Override
 	public List<Reply> selectList(int boardNo) {
-		
-		return rDao.insertList(boardNo);
+		return rDao.selectList(boardNo);
 	}
-
 
 	@Override
 	public int deleteReply(Reply r) {
-		
 		return rDao.deleteReply(r);
 	}
 
 }
+
+
+
+
+

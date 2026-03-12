@@ -61,17 +61,12 @@
                 </tbody>
             </table>
 
-            <sec:authorize access="hasRole('ROLE_USER')">
-                <div class='btn-area'>
-                    <button data-toggle="modal" data-target="#chatModal"
-                    class="btn btn-danger">채팅방 만들기</button>
-                </div>
-            </sec:authorize>
-
+            <div class='btn-area'>
+                <button data-toggle="modal" data-target="#chatModal"
+                class="btn btn-danger">채팅방 만들기</button>
+            </div>
         </div>
-
     </div>
-
 
     <div class="modal fade" id="chatModal">
         <div class="modal-dialog modal-sm">
@@ -99,8 +94,6 @@
             </div>
         </div>
     </div>
-
     <jsp:include page="/WEB-INF/views/common/footer.jsp" />
-
 </body>
 </html>

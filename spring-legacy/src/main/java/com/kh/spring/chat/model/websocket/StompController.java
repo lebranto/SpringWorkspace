@@ -20,54 +20,57 @@ public class StompController {
 	
 	private final ChatService service;
 	private final SimpMessagingTemplate messagingTemplate;
-	
 	/*
 	 * SimpMessagingTemplate
-	 *  - 서버에서 특정 클라이언트에게 메세지를 전송하기 위한 STOMP 템플릿
-	 *  - STOMP 구독 경로로 메세지를 저송 할 수 있다.
+	 *  - 서버에서 특정 클라이언트에게 메세지를 전송하기 위한 STOMP템플릿
+	 *  - STOMP구독경로로 메시지를 전송할 수 있다
 	 *  
-	 *  convertAndSend() : 전체 사용자에게 메세지를 보내야하는 경우
-	 *  convertAndSendToUser() : 특정 사용자에게 메세지를 보내야 하는 경우
-	 * 
-	 * */
-
+	 *  convertAndSend() : 전체 사용자에게 메시지를 보내야하는 경우
+	 *  convertAndSendToUser() : 특정 사용자에게 메시지를 보내야 하는 경우
+	 *  */
+	
 	@MessageMapping("/chat/enter/{roomNo}")
-	@SendTo("/topic/room/{roomNo}") //구독 url 지정 
+	@SendTo("/topic/room/{roomNo}")//구독 url 지정
 	public ChatMessage handleEnter(
-			@DestinationVariable("roomNo") int roomNo, // pathvaliable 과 똑같은 역할 
-			@Payload ChatMessage message  // json 형태의 객체를 vo로 변환
+			@DestinationVariable int roomNo,
+			@Payload ChatMessage message
 			) {
 		message.setType(ChatMessage.MessageType.ENTER);
-		message.setMessage(message.getUserName()+ "님이 입장하셨습니다.");
+		message.setMessage(message.getUserName()+"님이 입장하셨습니다.");
 		
-		// 메세지 브로커에게 메세지 템플릿 전송
+		// 메세지 브로커에게 메시지 템플릿 전송
 		return message;
 	}
 	
 	@MessageMapping("/chat/exit/{roomNo}")
-     public void handleExit(
-    		 @DestinationVariable int roomNo,
-    		 @Payload ChatMessage message
-    		 ) {
-		
+	public void handleExit(
+			@DestinationVariable int roomNo,
+			@Payload ChatMessage message
+			) {
 		// 1. 참여자 정보 삭제
-		// 2. 채팅방 참여자 수가 0명이라면, 채팅방을 삭제
+		// 2. 채팅방 참여자 수가 0명이라면, 채티방을삭제
 		service.exitChatRoom(message);
 		
-		
-		// 3. 퇴장메세지 담은 후 전송
+		// 3. 퇴장메시지 담은 후 전송
 		message.setType(ChatMessage.MessageType.EXIT);
-		message.setMessage(message.getUserName()+ "님이 퇴장하셨습니다.");
-		messagingTemplate.convertAndSend("/topic/room/"+ roomNo, message);
-		
-	}  
-	
+		message.setMessage(message.getUserName()+"님이 퇴장했습니다.");
+		messagingTemplate.convertAndSend("/topic/room/"+roomNo,message);
+	}
 	
 	@MessageMapping("/notice/send")
 	@SendTo("/topic/notice")
 	public String sendNotice(@Payload String notice) {
-		
 		return notice;
 	}
 	
+	
 }
+
+
+
+
+
+
+
+
+

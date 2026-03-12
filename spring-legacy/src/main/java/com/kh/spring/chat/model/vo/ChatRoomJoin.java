@@ -6,8 +6,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ChatRoomJoin {
-
 	private int userNo;
 	private int chatRoomNo;
-	
 }
+
+
+
+
+
+
