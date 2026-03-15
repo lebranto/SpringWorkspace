@@ -8,7 +8,23 @@
 <head>
 <meta charset="UTF-8">
 <title>제목</title>
+<meta name="_csrf" content="${_csrf.token}" >
+<meta name="_csrf_header" content="${_csrf.headerName}">
+<script>
+	window.onload = function(){
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr('content');
+		
+		// 모든 ajax요청에 자동으로 csrf토큰을 적용
+		$(document).ajaxSend(function(e, xhr, options){
+			xhr.setRequestHeader(header, token);
+		});
+	}
+</script>
 <!--  공통적으로사용할 라이브러리 추가 -->
+<script
+		src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>	
 <!-- Jquey 라이브러리 -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <!-- 부트스트랩에서 제공하있는 스타일 -->
@@ -47,7 +63,9 @@
 	height:100%;
 	float:left;
 }
-#header_1_left {width :30%; position : relative; background : black;}
+#header_1_left {width :30%; position : relative;
+		background : black;
+}
 #header_1_center{width: 40%;}
 #header_1_right{width : 30%;}
 
@@ -83,6 +101,22 @@ height:80%; position:absolute; margin:auto; top:0px; bottom:0px; right:0px; left
 	background-color : white;
 }
 </style>
+
+<sec:authorize access="isAuthenticated()">
+	<script>
+		$(function(){
+			const stompClient = Stomp.over(new SockJS('${contextPath}/stomp'));
+			
+			stompClient.connect({},function(){
+				//전체 공지사항 url구독
+				stompClient.subscribe("/topic/notice", function(message){
+					alertify.alert(message.body);
+				})
+			})
+		})
+	</script>
+</sec:authorize>
+
 </head>
 <body>
 <c:if test="${not empty alertMsg}">
@@ -98,68 +132,46 @@ height:80%; position:absolute; margin:auto; top:0px; bottom:0px; right:0px; left
 			<div id="header_1_center">
 			</div>
 			<c:set var="contextPath" value="${pageContext.request.contextPath}" scope="application" />
-			
 			<div id="header_1_right">
 				
-					<!-- 로그인하지 않은 사용자가 보게될 화면 -->			
-                    <sec:authorize access="isAnonymous()">
-                        <!-- 로그인전이라면 -->
-                        <a href="${contextPath }/security/insert">회원가입</a>
-                        <!-- 모달창 설정 : data-target에 정의해놓은 아이디의 dom요소를 띄워줌 -->
-                        <a href="${contextPath}/member/login">로그인</a>
-                    </sec:authorize>
-                   	<sec:authorize access="isAuthenticated">
-                        <label>
-                        <!-- 
-                        	authentication내부의 데이터
-                        	1. principal : 사용자 정보가 담기는 영억
-                        	2. Authorities : 사용자의 권한이 담긴 영역
-                        	3. 크리덴셜 : 사용자의 암호와된 "비밀번호"가 담기는 영역
-                         -->
-                        
-        
-                        <sec:authentication property="principal.userName"/>님 환영합니다.</label> &nbsp;&nbsp;
-                        <a href="${contextPath }/security/myPage">마이페이지</a>
-                        <form:form method="post" action="${contextPath}/member/logout" style="display:inline">
-                         <button class="border-0 bg-transparent text-secondary p-0 ml-2">로그아웃</button>
-                        </form:form>
-                   	</sec:authorize>
+				<!-- 로그인하지 않은 사용자가 보게될 화면 -->
+				<sec:authorize access="isAnonymous()">
+					<a href="${contextPath }/security/insert">회원가입</a>
+					<a href="${contextPath}/member/login">로그인</a>				
+				</sec:authorize>	
+					
+				<sec:authorize access="isAuthenticated()" >
+					<!-- 
+						authentication내부의 데이터
+						1. principal : 사용자 정보가 담기는 영역
+						2. Authorities : 사용자의 권한이 담기는 영역
+						3. 크리덴셜 : 사용자의 암호화된 "비밀번호"가 담기는 영역 
+					 -->
+					<label><sec:authentication property="principal.userName"/> 님 환영합니다.</label> &nbsp;&nbsp;
+					<a href="${contextPath }/security/myPage">마이페이지</a>
+					
+					<form:form method="post" action="${contextPath }/member/logout" style="display: inline;">
+						<button  class="border-0 bg-transparent text-secondary p-0 ml-2"
+						>로그아웃</button>					
+					</form:form>				
+				</sec:authorize>				
 			</div>
 		</div>
 		<div id="header_2">
 			<ul>
-			<li><a href="${contextPath }">HOME</a></li>
-			<!-- 권한별 URL 노출 설정 -->		
-			<sec:authorize access="hasAnyRole('ROLE_USER','ROLE_ADMIN')">
-            <li><a href="${contextPath }/chat/chatRoomList">채팅</a></li>
-
-                <c:forEach items='${boardTypeMap}' var='boardType'>
-                    <li><a href="${contextPath }/board/list/${boardType.key}">${boardType.value.boardName}</a></li>
-                </c:forEach>
-			</sec:authorize>
-			<sec:authorize access="hasRole('ADMIN')">
-				<li><a>관리자페이지</a></li>
-			</sec:authorize>
-			
+			<!-- 권한별 URL 노출 설정 -->
+				<li><a href="${contextPath }">HOME</a></li>
+				<sec:authorize access="hasAnyRole('ROLE_USER','ROLE_ADMIN')">
+					<li><a href="${contextPath }/chat/chatRoomList">채팅</a></li>
+					<c:forEach items='${boardTypeMap}' var='boardType'>
+						<li><a href="${contextPath }/board/list/${boardType.key}">${boardType.value.boardName}</a></li>
+					</c:forEach>				
+				</sec:authorize>
+				<sec:authorize access="hasRole('ROLE_ADMIN')">
+					<li><a>관리자페이지</a></li>
+				</sec:authorize>
 			</ul>
 		</div>	
 	</div>
-                   
-                   	
-                   	
-						        
-                    
-                    
-             
-				
-
-
-
-
-
-
-
-
-
 </body>
 </html>

@@ -9,9 +9,7 @@
 		<param-value>/WEB-INF/spring/*-context.xml</param-value>
 	</context-param>
 	
-	<!-- Creates the Spring Container shared by all Servlets and Filters 
-	
-	-->
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
@@ -31,9 +29,8 @@
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-
-	<!-- 인코딩 필터  -->
 	
+	<!-- 인코딩 필터 -->
 	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -42,8 +39,8 @@
 			<param-value>utf-8</param-value>
 		</init-param>
 		<init-param>
-			<param-name>forceEncofing</param-name>
-			<param-value>true</param-value>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>	
 		</init-param>
 	</filter>
 	<filter-mapping>
@@ -51,46 +48,41 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
-	
 	<!-- 
-	
-		Multipart 형식의 데이터를 처리하기 위한 필터
-		 - DisparthcherSerclet이 Request 를 MultioartRequest로 파싱하기 전,
-		 Filter 단계에서 파싱하도록 하는 필터
-	
+		Multipart형식의 데이터를 처리하기 위한 필터
+		 - DispatcherServlet이 Request를 MultipartRequest로 파싱하기
+		 전, Filter단계에서 파싱하도록 하는 필터.
 	 -->
-	
 	<filter>
 		<filter-name>multipartFilter</filter-name>
 		<filter-class>org.springframework.web.multipart.support.MultipartFilter</filter-class>
-	 	<init-param>
-	 		<param-name>multipartResolverBeanName</param-name>
-	 		<param-value>multipartResolver</param-value>
-	 	</init-param>
+		
+		<init-param>
+			<param-name>multipartResolverBeanName</param-name>
+			<param-value>multipartResolver</param-value>
+		</init-param>		
 	</filter>
-	 <filter-mapping>
-	 	<filter-name>multipartFilter</filter-name>
-	 	<url-pattern>/*</url-pattern>
-	 </filter-mapping>
-	 
+	<filter-mapping>
+		<filter-name>multipartFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	
 	<!-- 
 		스프링 시큐리티 필터체인 등록하기
 	 -->
-	 
-	 <filter>
-	 	<filter-name>springSecurityFilterChain</filter-name>
-	 	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	 </filter>
-	 	
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
 	
 	<filter-mapping>
-	 	<filter-name>springSecurityFilterChain</filter-name>
-	 	<url-pattern>/*</url-pattern>
-	 </filter-mapping>
-	 
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	
+
+
 
 
 </web-app>

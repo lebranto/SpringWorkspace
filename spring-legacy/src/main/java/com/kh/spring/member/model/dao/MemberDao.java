@@ -5,16 +5,16 @@ import com.kh.spring.security.model.vo.MemberExt;
 
 public interface MemberDao {
 
-	public Member loginMember(Member m);
+	Member loginMember(Member m);
 
-	public int insertMember(Member m);
+	int insertMember(Member m);
 
-	public int idCheck(String userId);
+	int idCheck(String userId);
 
-	public Member selectOne(String userId);
+	Member selectOne(String userId);
 
-	public int updateMember(MemberExt loginUser);
+	int updateMember(MemberExt loginUser);
 
-	public void insertAuthority(Member m);
+	void insertAuthority(Member m);
 
 }
